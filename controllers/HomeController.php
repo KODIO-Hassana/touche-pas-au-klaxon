@@ -1,13 +1,18 @@
 <?php
 require_once __DIR__ . '/../models/Agence.php';
+require_once __DIR__ . '/../models/Trajet.php'; // On importe le nouveau modèle
 
 class HomeController {
     public function index() {
-        // 1. On demande au Modèle de récupérer les agences
+        // Récupération des agences
         $agenceModel = new Agence();
         $agences = $agenceModel->getAllAgences();
 
-        // 2. On charge la Vue (l'affichage) en lui transmettant la variable $agences
+        // Récupération des trajets
+        $trajetModel = new Trajet();
+        $trajets = $trajetModel->getAllTrajets();
+
+        // On charge l'affichage
         require_once __DIR__ . '/../views/accueil.php';
     }
 }

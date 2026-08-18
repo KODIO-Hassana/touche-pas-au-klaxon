@@ -22,7 +22,8 @@ class AuthController {
                 
                 // C'est un succès ! On stocke son prénom dans la session
                 $_SESSION['utilisateur_prenom'] = $user['prenom'];
-                
+                $_SESSION['utilisateur_id'] = $user['id_utilisateur'];
+                                
                 // On le renvoie vers la page d'accueil
                 header("Location: /touche-pas-au-klaxon/");
                 exit();

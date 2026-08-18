@@ -16,6 +16,22 @@
     </div>
 
     <h1>Bienvenue sur l'application Touche pas au Klaxon !</h1>
+    <a href="/touche-pas-au-klaxon/trajet/ajouter"><button>Proposer un trajet</button></a>
+
+    <h2>Trajets disponibles :</h2>
+    <ul>
+        <?php if (empty($trajets)): ?>
+            <li>Aucun trajet proposé pour le moment.</li>
+        <?php else: ?>
+            <?php foreach($trajets as $trajet): ?>
+                <li style="margin-bottom: 10px;">
+                    <strong>Départ le :</strong> <?= htmlspecialchars($trajet['date_heure_depart']) ?> <br>
+                    <strong>Places disponibles :</strong> <?= htmlspecialchars($trajet['places_disponibles']) ?> / <?= htmlspecialchars($trajet['places_total']) ?>
+                </li>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </ul>
+    <hr>
     
     <h2>Liste de nos agences :</h2>
     <ul>

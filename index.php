@@ -7,6 +7,7 @@ session_start();
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/controllers/HomeController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
+require_once __DIR__ . '/controllers/TrajetController.php';
 
 // 2. On importe le routeur que tu as téléchargé
 use Buki\Router\Router;
@@ -38,6 +39,18 @@ $router->post('/connexion', function() {
 $router->get('/deconnexion', function() {
     $controller = new AuthController();
     $controller->logout();
+});
+
+// Route pour AFFICHER le formulaire d'ajout de trajet
+$router->get('/trajet/ajouter', function() {
+    $controller = new TrajetController();
+    $controller->create();
+});
+
+// Route pour ENREGISTRER le trajet dans la base de données
+$router->post('/trajet/ajouter', function() {
+    $controller = new TrajetController();
+    $controller->store();
 });
 
 // 5. On demande au routeur de s'exécuter
