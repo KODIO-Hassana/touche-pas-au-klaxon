@@ -78,7 +78,14 @@
                                                         <span class="badge bg-danger">Complet</span>
                                                     <?php endif; ?>
                                                 <?php else: ?>
-                                                    <span class="text-muted small"><em>Votre trajet</em></span>
+                                                    <!-- Bouton Modifier -->
+                                                    <a href="/touche-pas-au-klaxon/trajet/modifier?id=<?= $trajet['id_trajet'] ?>" class="btn btn-sm btn-warning text-dark me-2">Modifier</a>
+                                                    
+                                                    <!-- Bouton Supprimer (avec alerte de confirmation JS) -->
+                                                    <form action="/touche-pas-au-klaxon/trajet/supprimer" method="POST" style="margin: 0;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce trajet ?');">
+                                                        <input type="hidden" name="id_trajet" value="<?= $trajet['id_trajet'] ?>">
+                                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                                    </form>
                                                 <?php endif; ?>
                                             <?php endif; ?>
                                         </div>

@@ -59,6 +59,12 @@ $router->post('/trajet/reserver', function() {
     $controller->reserver();
 });
 
+// Route pour SUPPRIMER un trajet
+$router->post('/trajet/supprimer', function() {
+    $controller = new TrajetController();
+    $controller->supprimer();
+});
+
 // Route pour AFFICHER le formulaire d'inscription
 // $router->get('/inscription', function() {
 //     $controller = new AuthController();

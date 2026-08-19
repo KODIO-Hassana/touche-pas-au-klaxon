@@ -72,5 +72,16 @@ class Trajet {
         
         return $stmt->execute();
     }
+
+    // Fonction pour supprimer un trajet (Sécurisée : on vérifie que c'est bien l'auteur qui supprime)
+    public function supprimerTrajet($id_trajet, $id_utilisateur) {
+        $requete = "DELETE FROM trajet WHERE id_trajet = :id_trajet AND id_utilisateur = :id_utilisateur";
+        $stmt = $this->conn->prepare($requete);
+        
+        $stmt->bindParam(':id_trajet', $id_trajet);
+        $stmt->bindParam(':id_utilisateur', $id_utilisateur);
+        
+        return $stmt->execute();
+    }
 }
 ?>
