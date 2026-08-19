@@ -43,32 +43,32 @@ class AuthController {
     }
 
     // Afficher le formulaire d'inscription
-    public function register() {
-        require_once __DIR__ . '/../views/inscription.php';
-    }
+    // public function register() {
+    //     require_once __DIR__ . '/../views/inscription.php';
+    // }
 
     // Traiter les données de l'inscription
-    public function storeUser() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nom = $_POST['nom'];
-            $prenom = $_POST['prenom'];
-            $email = $_POST['email'];
-            $password = $_POST['mot_de_passe'];
+    // public function storeUser() {
+    //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //         $nom = $_POST['nom'];
+    //         $prenom = $_POST['prenom'];
+    //         $email = $_POST['email'];
+    //         $password = $_POST['mot_de_passe'];
 
-            $userModel = new Utilisateur();
+    //         $userModel = new Utilisateur();
             
-            // On enregistre l'utilisateur
-            $succes = $userModel->createUser($nom, $prenom, $email, $password);
+    //         // On enregistre l'utilisateur
+    //         $succes = $userModel->createUser($nom, $prenom, $email, $password);
 
-            if ($succes) {
-                // Si ça marche, on le renvoie vers la page de connexion pour qu'il s'identifie
-                header("Location: /touche-pas-au-klaxon/connexion");
-                exit();
-            } else {
-                $erreur = "Une erreur est survenue lors de l'inscription.";
-                require_once __DIR__ . '/../views/inscription.php';
-            }
-        }
-    }
+    //         if ($succes) {
+    //             // Si ça marche, on le renvoie vers la page de connexion pour qu'il s'identifie
+    //             header("Location: /touche-pas-au-klaxon/connexion");
+    //             exit();
+    //         } else {
+    //             $erreur = "Une erreur est survenue lors de l'inscription.";
+    //             require_once __DIR__ . '/../views/inscription.php';
+    //         }
+    //     }
+    // }
 }
 ?>

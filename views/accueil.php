@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - Touche pas au Klaxon</title>
-    <!-- LIEN VERS BOOTSTRAP (La magie visuelle opère ici) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-    <!-- Barre de navigation moderne -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container">
             <a class="navbar-brand" href="/touche-pas-au-klaxon/">🚗 Touche pas au Klaxon</a>
@@ -24,16 +22,24 @@
         </div>
     </nav>
 
-    <!-- Conteneur principal qui centre le contenu -->
+    <!-- ZONE DES MESSAGES FLASH -->
     <div class="container">
-        
+        <?php if(isset($_SESSION['flash_message'])): ?>
+            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <?= htmlspecialchars($_SESSION['flash_message']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['flash_message']); ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3">Tableau de bord des trajets</h1>
             <a href="/touche-pas-au-klaxon/trajet/ajouter" class="btn btn-success">+ Proposer un trajet</a>
         </div>
 
         <div class="row">
-            <!-- Colonne pour les trajets (prend plus de place) -->
             <div class="col-md-8">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-white">
@@ -50,12 +56,12 @@
                                             <h6 class="mb-0">De <?= htmlspecialchars($trajet['ville_depart']) ?> à <?= htmlspecialchars($trajet['ville_arrivee']) ?></h6>
                                             <small class="text-muted">Départ le : <?= htmlspecialchars(date('d/m/Y à H:i', strtotime($trajet['date_heure_depart']))) ?></small>
                                         </div>
+                                        
                                         <div class="d-flex align-items-center">
                                             <span class="badge bg-primary rounded-pill me-3">
                                                 <?= htmlspecialchars($trajet['places_disponibles']) ?> / <?= htmlspecialchars($trajet['places_total']) ?> places
                                             </span>
                                             
-                                            <!-- Logique d'affichage du bouton Réserver -->
                                             <?php if(isset($_SESSION['utilisateur_id'])): ?>
                                                 <?php if($_SESSION['utilisateur_id'] != $trajet['id_utilisateur']): ?>
                                                     <?php if($trajet['places_disponibles'] > 0): ?>
@@ -79,7 +85,6 @@
                 </div>
             </div>
 
-            <!-- Colonne pour les agences (plus petite sur le côté) -->
             <div class="col-md-4">
                 <div class="card shadow-sm">
                     <div class="card-header bg-white">
@@ -95,8 +100,9 @@
                 </div>
             </div>
         </div>
-
     </div>
 
+    <!-- Script Bootstrap pour fermer la notification -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
