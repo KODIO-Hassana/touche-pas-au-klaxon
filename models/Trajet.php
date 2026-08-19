@@ -34,8 +34,24 @@ class Trajet {
     }
 
     // Fonction pour récupérer tous les trajets disponibles
+    // public function getAllTrajets() {
+    //     $requete = "SELECT * FROM trajet ORDER BY date_heure_depart ASC";
+    //     $stmt = $this->conn->prepare($requete);
+    //     $stmt->execute();
+        
+    //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // }
+
     public function getAllTrajets() {
-        $requete = "SELECT * FROM trajet ORDER BY date_heure_depart ASC";
+        // On sélectionne tout le trajet, plus le nom de l'agence de départ et d'arrivée
+        $requete = "SELECT trajet.*, 
+                           dep.nom AS ville_depart, 
+                           arr.nom AS ville_arrivee 
+                    FROM trajet 
+                    INNER JOIN agence AS dep ON trajet.id_agence_depart = dep.id_agence 
+                    INNER JOIN agence AS arr ON trajet.id_agence_arrivee = arr.id_agence 
+                    ORDER BY date_heure_depart ASC";
+        
         $stmt = $this->conn->prepare($requete);
         $stmt->execute();
         
