@@ -43,13 +43,18 @@ class Trajet {
     // }
 
     public function getAllTrajets() {
-        // On sélectionne tout le trajet, plus le nom de l'agence de départ et d'arrivée
+        // On sélectionne tout le trajet, les noms des agences ET les infos du chauffeur
         $requete = "SELECT trajet.*, 
                            dep.nom AS ville_depart, 
-                           arr.nom AS ville_arrivee 
+                           arr.nom AS ville_arrivee,
+                           u.nom AS chauffeur_nom,
+                           u.prenom AS chauffeur_prenom,
+                           u.telephone AS chauffeur_telephone,
+                           u.email AS chauffeur_email
                     FROM trajet 
                     INNER JOIN agence AS dep ON trajet.id_agence_depart = dep.id_agence 
                     INNER JOIN agence AS arr ON trajet.id_agence_arrivee = arr.id_agence 
+                    INNER JOIN utilisateur AS u ON trajet.id_utilisateur = u.id_utilisateur
                     ORDER BY date_heure_depart ASC";
         
         $stmt = $this->conn->prepare($requete);

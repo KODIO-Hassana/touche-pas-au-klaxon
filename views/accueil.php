@@ -62,6 +62,11 @@
                                                 <?= htmlspecialchars($trajet['places_disponibles']) ?> / <?= htmlspecialchars($trajet['places_total']) ?> places
                                             </span>
                                             
+                                            <!-- Bouton Infos -->
+                                            <button type="button" class="btn btn-sm btn-info text-white me-2" data-bs-toggle="modal" data-bs-target="#modalTrajet<?= $trajet['id_trajet'] ?>">
+                                                Infos
+                                            </button>
+                                            
                                             <?php if(isset($_SESSION['utilisateur_id'])): ?>
                                                 <?php if($_SESSION['utilisateur_id'] != $trajet['id_utilisateur']): ?>
                                                     <?php if($trajet['places_disponibles'] > 0): ?>
@@ -78,9 +83,31 @@
                                             <?php endif; ?>
                                         </div>
                                     </li>
+
+                                    <!-- Fenêtre Modale Bootstrap pour ce trajet -->
+                                    <div class="modal fade" id="modalTrajet<?= $trajet['id_trajet'] ?>" tabindex="-1" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content">
+                                          <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Détails du trajet</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p><strong>Conducteur :</strong> <?= htmlspecialchars($trajet['chauffeur_prenom'] . ' ' . $trajet['chauffeur_nom']) ?></p>
+                                            <p><strong>Téléphone :</strong> <?= htmlspecialchars($trajet['chauffeur_telephone'] ?? 'Non renseigné') ?></p>
+                                            <p><strong>Email :</strong> <?= htmlspecialchars($trajet['chauffeur_email']) ?></p>
+                                            <p><strong>Places au total :</strong> <?= htmlspecialchars($trajet['places_total']) ?></p>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    
                                 <?php endforeach; ?>
                             </ul>
-                        <?php endif; ?>
+                        <?php endif; ?> <!-- C'EST LUI QUI AVAIT DISPARU ! -->
                     </div>
                 </div>
             </div>
@@ -102,7 +129,7 @@
         </div>
     </div>
 
-    <!-- Script Bootstrap pour fermer la notification -->
+    <!-- Script Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
