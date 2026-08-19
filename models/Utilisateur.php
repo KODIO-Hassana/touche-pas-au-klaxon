@@ -18,5 +18,21 @@ class Utilisateur {
         
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    // Fonction pour créer un nouvel utilisateur
+    public function createUser($nom, $prenom, $email, $mot_de_passe) {
+        // Assure-toi que les noms des colonnes (nom, prenom, email, mot_de_passe) correspondent bien à ta table phpMyAdmin
+        $requete = "INSERT INTO utilisateur (nom, prenom, email, mot_de_passe) 
+                    VALUES (:nom, :prenom, :email, :mdp)";
+        
+        $stmt = $this->conn->prepare($requete);
+        
+        $stmt->bindParam(':nom', $nom);
+        $stmt->bindParam(':prenom', $prenom);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':mdp', $mot_de_passe);
+        
+        return $stmt->execute();
+    }
 }
 ?>

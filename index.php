@@ -59,5 +59,17 @@ $router->post('/trajet/reserver', function() {
     $controller->reserver();
 });
 
+// Route pour AFFICHER le formulaire d'inscription
+$router->get('/inscription', function() {
+    $controller = new AuthController();
+    $controller->register();
+});
+
+// Route pour TRAITER le formulaire d'inscription
+$router->post('/inscription', function() {
+    $controller = new AuthController();
+    $controller->storeUser();
+});
+
 // 5. On demande au routeur de s'exécuter
 $router->run();
