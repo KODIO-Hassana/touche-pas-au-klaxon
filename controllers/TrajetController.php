@@ -50,5 +50,24 @@ class TrajetController {
             }
         }
     }
+
+    // 3. Traiter la réservation d'un trajet
+    public function reserver() {
+        // Sécurité : il faut être connecté pour réserver
+        if (!isset($_SESSION['utilisateur_id'])) {
+            header("Location: /touche-pas-au-klaxon/connexion");
+            exit();
+        }
+
+        // On vérifie qu'on a bien reçu l'ID du trajet à réserver
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_trajet'])) {
+            $trajetModel = new Trajet();
+            $trajetModel->reserverPlace($_POST['id_trajet']);
+        }
+
+        // On redirige vers l'accueil pour voir la mise à jour des places
+        header("Location: /touche-pas-au-klaxon/");
+        exit();
+    }
 }
 ?>

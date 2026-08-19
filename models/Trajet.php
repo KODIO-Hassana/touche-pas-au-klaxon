@@ -57,5 +57,15 @@ class Trajet {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // Fonction pour réserver une place (soustrait 1 aux places disponibles)
+    public function reserverPlace($id_trajet) {
+        // L'instruction UPDATE modifie une ligne existante
+        $requete = "UPDATE trajet SET places_disponibles = places_disponibles - 1 WHERE id_trajet = :id AND places_disponibles > 0";
+        $stmt = $this->conn->prepare($requete);
+        $stmt->bindParam(':id', $id_trajet);
+        
+        return $stmt->execute();
+    }
 }
 ?>

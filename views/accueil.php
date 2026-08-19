@@ -50,9 +50,27 @@
                                             <h6 class="mb-0">De <?= htmlspecialchars($trajet['ville_depart']) ?> à <?= htmlspecialchars($trajet['ville_arrivee']) ?></h6>
                                             <small class="text-muted">Départ le : <?= htmlspecialchars(date('d/m/Y à H:i', strtotime($trajet['date_heure_depart']))) ?></small>
                                         </div>
-                                        <span class="badge bg-primary rounded-pill">
-                                            <?= htmlspecialchars($trajet['places_disponibles']) ?> / <?= htmlspecialchars($trajet['places_total']) ?> places
-                                        </span>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-primary rounded-pill me-3">
+                                                <?= htmlspecialchars($trajet['places_disponibles']) ?> / <?= htmlspecialchars($trajet['places_total']) ?> places
+                                            </span>
+                                            
+                                            <!-- Logique d'affichage du bouton Réserver -->
+                                            <?php if(isset($_SESSION['utilisateur_id'])): ?>
+                                                <?php if($_SESSION['utilisateur_id'] != $trajet['id_utilisateur']): ?>
+                                                    <?php if($trajet['places_disponibles'] > 0): ?>
+                                                        <form action="/touche-pas-au-klaxon/trajet/reserver" method="POST" style="margin: 0;">
+                                                            <input type="hidden" name="id_trajet" value="<?= $trajet['id_trajet'] ?>">
+                                                            <button type="submit" class="btn btn-sm btn-outline-primary">Réserver</button>
+                                                        </form>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-danger">Complet</span>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <span class="text-muted small"><em>Votre trajet</em></span>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+                                        </div>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

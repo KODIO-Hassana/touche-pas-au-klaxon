@@ -53,5 +53,11 @@ $router->post('/trajet/ajouter', function() {
     $controller->store();
 });
 
+// Route pour RESERVER une place
+$router->post('/trajet/reserver', function() {
+    $controller = new TrajetController();
+    $controller->reserver();
+});
+
 // 5. On demande au routeur de s'exécuter
 $router->run();
