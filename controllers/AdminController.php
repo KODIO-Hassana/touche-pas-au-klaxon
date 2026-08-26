@@ -130,5 +130,43 @@ class AdminController {
         require_once __DIR__ . '/../views/admin_utilisateurs.php';
     }
 
+    // --- PARTIE GESTION DES TRAJETS (ADMIN) ---
+    
+    // 1. Afficher tous les trajets (avec tri et recherche)
+    public function manageTrajets() {
+        $this->verifierAdmin();
+        
+        require_once __DIR__ . '/../models/Trajet.php';
+        $trajetModel = new Trajet();
+        
+        // Récupération des paramètres dans l'URL (ou valeurs par défaut)
+        $tri_demande = isset($_GET['sort']) ? $_GET['sort'] : 'date';
+        $recherche_demande = isset($_GET['search']) ? trim($_GET['search']) : '';
+        
+        $trajets = $trajetModel->getAllTrajetsAdmin($tri_demande, $recherche_demande);
+        
+        require_once __DIR__ . '/../views/admin_trajets.php';
+    }
+
+    // 2. Supprimer un trajet (Pouvoir de l'admin)
+    public function deleteTrajet() {
+        $this->verifierAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_trajet'])) {
+            require_once __DIR__ . '/../models/Trajet.php';
+            $trajetModel = new Trajet();
+            
+            // On utilise la fonction de suppression que tu avais déjà créée pour l'employé
+            if ($trajetModel->supprimerTrajet($_POST['id_trajet'])) {
+                $_SESSION['flash_message'] = "Le trajet a été supprimé par l'administrateur.";
+            } else {
+                $_SESSION['flash_message'] = "Erreur lors de la suppression du trajet.";
+            }
+        }
+        
+        header("Location: /touche-pas-au-klaxon/admin/trajets");
+        exit();
+    }
+
 }
 ?>

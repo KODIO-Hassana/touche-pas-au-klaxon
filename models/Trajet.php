@@ -42,24 +42,47 @@ class Trajet {
     //     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     // }
 
-    public function getAllTrajets() {
-        // On sélectionne tout le trajet, les noms des agences ET les infos du chauffeur
-        $requete = "SELECT trajet.*, 
-                           dep.nom AS ville_depart, 
-                           arr.nom AS ville_arrivee,
-                           u.nom AS chauffeur_nom,
-                           u.prenom AS chauffeur_prenom,
-                           u.telephone AS chauffeur_telephone,
-                           u.email AS chauffeur_email
-                    FROM trajet 
-                    INNER JOIN agence AS dep ON trajet.id_agence_depart = dep.id_agence 
-                    INNER JOIN agence AS arr ON trajet.id_agence_arrivee = arr.id_agence 
-                    INNER JOIN utilisateur AS u ON trajet.id_utilisateur = u.id_utilisateur
-                    ORDER BY date_heure_depart ASC";
+   // Fonction exclusive Admin : Récupérer TOUS les trajets (avec Tri et Recherche)
+    public function getAllTrajetsAdmin($tri = 'date', $recherche = '') {
+        // 1. Gestion du tri sécurisé
+        $order_by = 't.date_heure_depart DESC'; // Tri par défaut (les plus récents en premier)
+        
+        if ($tri === 'chauffeur') $order_by = 'u.nom ASC';
+        if ($tri === 'depart') $order_by = 'ad.nom ASC';
+        if ($tri === 'arrivee') $order_by = 'aa.nom ASC';
+        if ($tri === 'places') $order_by = 't.places_disponibles ASC';
+
+        // 2. Construction de la requête de base
+        $requete = "SELECT t.*, 
+                           u.nom AS chauffeur_nom, u.prenom AS chauffeur_prenom,
+                           ad.nom AS ville_depart, 
+                           aa.nom AS ville_arrivee
+                    FROM trajet t
+                    JOIN utilisateur u ON t.id_utilisateur = u.id_utilisateur
+                    JOIN agence ad ON t.id_agence_depart = ad.id_agence
+                    JOIN agence aa ON t.id_agence_arrivee = aa.id_agence";
+
+        // 3. Ajout de la recherche si l'admin a tapé quelque chose
+        if (!empty($recherche)) {
+            // On cherche dans le nom/prénom du chauffeur, ou dans le nom des villes
+            $requete .= " WHERE u.nom LIKE :recherche 
+                             OR u.prenom LIKE :recherche 
+                             OR ad.nom LIKE :recherche 
+                             OR aa.nom LIKE :recherche";
+        }
+        
+        // 4. On ajoute la condition de tri à la fin
+        $requete .= " ORDER BY " . $order_by;
         
         $stmt = $this->conn->prepare($requete);
-        $stmt->execute();
         
+        // 5. On insère le mot recherché s'il y en a un
+        if (!empty($recherche)) {
+            $terme = '%' . $recherche . '%';
+            $stmt->bindParam(':recherche', $terme);
+        }
+        
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -117,5 +140,6 @@ class Trajet {
         
         return $stmt->execute();
     }
+
 }
 ?>

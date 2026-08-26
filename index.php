@@ -124,4 +124,15 @@ $router->get('/admin/utilisateurs', function() {
     $controller->manageUsers();
 });
 
+// Routes pour gérer les TRAJETS (Admin)
+$router->get('/admin/trajets', function() {
+    $controller = new AdminController();
+    $controller->manageTrajets();
+});
+
+$router->post('/admin/trajets/supprimer', function() {
+    $controller = new AdminController();
+    $controller->deleteTrajet();
+});
+
 $router->run();
