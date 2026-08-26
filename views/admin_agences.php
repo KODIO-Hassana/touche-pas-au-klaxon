@@ -38,10 +38,19 @@
     </nav>
 
     <div class="container mt-4">
+
+           <!-- Zone des Messages Flash -->
+        <?php if(isset($_SESSION['flash_message'])): ?>
+            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <?= htmlspecialchars($_SESSION['flash_message']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['flash_message']); ?>
+        <?php endif; ?>
         
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3">Gestion des Agences</h1>
-            <a href="#" class="btn btn-success">+ Ajouter une agence</a>
+            <a href="/touche-pas-au-klaxon/admin/agences/ajouter" class="btn btn-success">+ Ajouter une agence</a>
         </div>
 
         <div class="card shadow-sm">
@@ -59,9 +68,19 @@
                             <tr>
                                 <td><?= htmlspecialchars($agence['id_agence'] ?? $agence['id']) ?></td>
                                 <td class="fw-bold"><?= htmlspecialchars($agence['nom']) ?></td>
-                                <td class="text-end">
+                                <!-- <td class="text-end">
                                     <button class="btn btn-sm btn-warning">Modifier</button>
                                     <button class="btn btn-sm btn-danger">Supprimer</button>
+                                </td> -->
+                                <td class="text-end">
+                                    <!-- Bouton Modifier -->
+                                    <a href="/touche-pas-au-klaxon/admin/agences/modifier?id=<?= $agence['id_agence'] ?? $agence['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
+                                    
+                                    <!-- Bouton Supprimer avec alerte -->
+                                    <form action="/touche-pas-au-klaxon/admin/agences/supprimer" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette agence ?');">
+                                        <input type="hidden" name="id_agence" value="<?= $agence['id_agence'] ?? $agence['id'] ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

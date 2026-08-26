@@ -91,4 +91,31 @@ $router->get('/admin/agences', function() {
     $controller->manageAgences();
 });
 
+// Routes pour AJOUTER une agence (Admin)
+$router->get('/admin/agences/ajouter', function() {
+    $controller = new AdminController();
+    $controller->createAgence();
+});
+
+$router->post('/admin/agences/ajouter', function() {
+    $controller = new AdminController();
+    $controller->storeAgence();
+});
+
+// Routes pour MODIFIER une agence
+$router->get('/admin/agences/modifier', function() {
+    $controller = new AdminController();
+    $controller->editAgence();
+});
+$router->post('/admin/agences/modifier', function() {
+    $controller = new AdminController();
+    $controller->updateAgence();
+});
+
+// Route pour SUPPRIMER une agence
+$router->post('/admin/agences/supprimer', function() {
+    $controller = new AdminController();
+    $controller->deleteAgence();
+});
+
 $router->run();
