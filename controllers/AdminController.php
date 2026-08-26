@@ -21,14 +21,18 @@ class AdminController {
         require_once __DIR__ . '/../views/admin_dashboard.php';
     }
 
-    // Afficher la page de gestion des agences
+    // Afficher la page de gestion des agences (avec tri et recherche)
     public function manageAgences() {
-        $this->verifierAdmin(); // On bloque les intrus
+        $this->verifierAdmin(); 
         
-        // On récupère la liste complète des agences depuis la base de données
         require_once __DIR__ . '/../models/Agence.php';
         $agenceModel = new Agence();
-        $agences = $agenceModel->getAllAgences();
+        
+        // On récupère le tri et la recherche dans l'URL
+        $tri_demande = isset($_GET['sort']) ? $_GET['sort'] : 'nom';
+        $recherche_demande = isset($_GET['search']) ? trim($_GET['search']) : '';
+        
+        $agences = $agenceModel->getAllAgences($tri_demande, $recherche_demande);
         
         require_once __DIR__ . '/../views/admin_agences.php';
     }
@@ -108,6 +112,22 @@ class AdminController {
         }
         header("Location: /touche-pas-au-klaxon/admin/agences");
         exit();
+    }
+
+    public function manageUsers() {
+        $this->verifierAdmin(); 
+        
+        require_once __DIR__ . '/../models/Utilisateur.php';
+        $userModel = new Utilisateur();
+        
+        // On récupère le tri et la recherche depuis l'URL
+        $tri_demande = isset($_GET['sort']) ? $_GET['sort'] : 'nom';
+        $recherche_demande = isset($_GET['search']) ? trim($_GET['search']) : '';
+        
+        // On envoie les deux infos au Modèle
+        $utilisateurs = $userModel->getAllUtilisateurs($tri_demande, $recherche_demande);
+        
+        require_once __DIR__ . '/../views/admin_utilisateurs.php';
     }
 
 }

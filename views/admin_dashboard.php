@@ -26,13 +26,13 @@
                         <a class="nav-link active" href="/touche-pas-au-klaxon/admin/dashboard">Tableau de bord</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Utilisateurs</a>
+                        <a class="nav-link" href="/touche-pas-au-klaxon/admin/utilisateurs">Utilisateurs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Agences</a>
+                        <a class="nav-link" href="/touche-pas-au-klaxon/admin/agences">Agences</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Trajets</a>
+                        <a class="nav-link" href="/touche-pas-au-klaxon/admin/trajets">Trajets</a>
                     </li>
                     <li class="nav-item ms-3">
                         <a href="/touche-pas-au-klaxon/deconnexion" class="btn btn-danger btn-sm">Se déconnecter</a>
@@ -66,7 +66,8 @@
                     <div class="card-body">
                         <h5 class="card-title">Utilisateurs</h5>
                         <p class="card-text">Gérer la base des employés.</p>
-                        <button class="btn btn-primary" disabled>Bientôt disponible</button>
+                        <!-- <button class="btn btn-primary" disabled>Bientôt disponible</button> -->
+                         <a href="/touche-pas-au-klaxon/admin/utilisateurs" class="btn btn-primary">Voir les utilisateurs</a>
                     </div>
                 </div>
             </div>

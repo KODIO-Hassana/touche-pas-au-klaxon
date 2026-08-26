@@ -118,4 +118,10 @@ $router->post('/admin/agences/supprimer', function() {
     $controller->deleteAgence();
 });
 
+// Route pour lister les utilisateurs (Admin)
+$router->get('/admin/utilisateurs', function() {
+    $controller = new AdminController();
+    $controller->manageUsers();
+});
+
 $router->run();

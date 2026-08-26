@@ -21,13 +21,13 @@
                         <a class="nav-link" href="/touche-pas-au-klaxon/admin/dashboard">Tableau de bord</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Utilisateurs</a>
+                        <a class="nav-link" href="/touche-pas-au-klaxon/admin/utilisateurs">Utilisateurs</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="/touche-pas-au-klaxon/admin/agences">Agences</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Trajets</a>
+                        <a class="nav-link" href="/touche-pas-au-klaxon/admin/trajets">Trajets</a>
                     </li>
                     <li class="nav-item ms-3">
                         <a href="/touche-pas-au-klaxon/deconnexion" class="btn btn-danger btn-sm">Se déconnecter</a>
@@ -48,8 +48,21 @@
             <?php unset($_SESSION['flash_message']); ?>
         <?php endif; ?>
         
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3">Gestion des Agences</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+            <h1 class="h3 mb-2 mb-md-0">Gestion des Agences</h1>
+            
+            <!-- Barre de recherche -->
+            <form action="/touche-pas-au-klaxon/admin/agences" method="GET" class="d-flex mx-auto my-2 my-md-0">
+                <input type="text" name="search" class="form-control me-2" placeholder="Chercher une ville..." value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
+                <?php if(isset($_GET['sort'])): ?>
+                    <input type="hidden" name="sort" value="<?= htmlspecialchars($_GET['sort']) ?>">
+                <?php endif; ?>
+                <button type="submit" class="btn btn-primary">Chercher</button>
+                <?php if(isset($_GET['search']) && !empty($_GET['search'])): ?>
+                    <a href="/touche-pas-au-klaxon/admin/agences" class="btn btn-outline-danger ms-2" title="Annuler">X</a>
+                <?php endif; ?>
+            </form>
+
             <a href="/touche-pas-au-klaxon/admin/agences/ajouter" class="btn btn-success">+ Ajouter une agence</a>
         </div>
 
@@ -58,8 +71,8 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th>ID</th>
-                            <th>Nom de la ville (Agence)</th>
+                            <th><a href="?sort=id_agence" class="text-white text-decoration-none">ID ↕</a></th>
+                            <th><a href="?sort=nom" class="text-white text-decoration-none">Nom de la ville (Agence) ↕</a></th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>

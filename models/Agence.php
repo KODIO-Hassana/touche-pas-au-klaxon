@@ -10,13 +10,25 @@ class Agence {
         $this->conn = $db->getConnection();
     }
 
-    // Fonction pour récupérer toutes les agences
-    public function getAllAgences() {
-        $requete = "SELECT * FROM agence";
-        $stmt = $this->conn->prepare($requete);
-        $stmt->execute();
+    // Fonction pour récupérer toutes les agences (avec tri et recherche)
+    public function getAllAgences($tri = 'nom', $recherche = '') {
+        // Liste blanche pour sécuriser le tri
+        $colonnes_autorisees = ['id_agence', 'nom'];
+        if (!in_array($tri, $colonnes_autorisees)) {
+            $tri = 'nom'; // Tri alphabétique par défaut !
+        }
+
+        if (!empty($recherche)) {
+            $requete = "SELECT * FROM agence WHERE nom LIKE :recherche ORDER BY $tri ASC";
+            $stmt = $this->conn->prepare($requete);
+            $terme = '%' . $recherche . '%';
+            $stmt->bindParam(':recherche', $terme);
+        } else {
+            $requete = "SELECT * FROM agence ORDER BY $tri ASC";
+            $stmt = $this->conn->prepare($requete);
+        }
         
-        // On renvoie les résultats sous forme de tableau
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
