@@ -9,6 +9,8 @@ require_once __DIR__ . '/controllers/HomeController.php';
 require_once __DIR__ . '/controllers/AuthController.php';
 require_once __DIR__ . '/controllers/TrajetController.php';
 
+require_once 'controllers/AdminController.php'; 
+
 // 2. On importe le routeur que tu as téléchargé
 use Buki\Router\Router;
 
@@ -74,6 +76,19 @@ $router->get('/trajet/modifier', function() {
 $router->post('/trajet/modifier', function() {
     $controller = new TrajetController();
     $controller->update();
+});
+
+
+// Route pour le Tableau de bord Admin
+$router->get('/admin/dashboard', function() {
+    $controller = new AdminController();
+    $controller->dashboard();
+});
+
+// Route pour gérer les agences (Admin)
+$router->get('/admin/agences', function() {
+    $controller = new AdminController();
+    $controller->manageAgences();
 });
 
 $router->run();
