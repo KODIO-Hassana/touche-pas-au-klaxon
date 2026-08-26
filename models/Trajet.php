@@ -83,5 +83,39 @@ class Trajet {
         
         return $stmt->execute();
     }
+
+    // Fonction pour récupérer les détails d'un SEUL trajet (pour pré-remplir le formulaire)
+    public function getTrajetById($id_trajet) {
+        $requete = "SELECT * FROM trajet WHERE id_trajet = :id_trajet";
+        $stmt = $this->conn->prepare($requete);
+        $stmt->bindParam(':id_trajet', $id_trajet);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Fonction pour mettre à jour (écraser) les données du trajet
+    public function modifierTrajet($id_trajet, $depart, $arrivee, $places, $id_utilisateur, $agence_depart, $agence_arrivee) {
+        // La requête UPDATE modifie une ligne existante. On vérifie l'id_utilisateur par sécurité !
+        $requete = "UPDATE trajet 
+                    SET date_heure_depart = :depart, 
+                        date_heure_arrivee = :arrivee, 
+                        places_total = :places, 
+                        id_agence_depart = :agence_depart, 
+                        id_agence_arrivee = :agence_arrivee 
+                    WHERE id_trajet = :id_trajet AND id_utilisateur = :id_utilisateur";
+        
+        $stmt = $this->conn->prepare($requete);
+        
+        $stmt->bindParam(':depart', $depart);
+        $stmt->bindParam(':arrivee', $arrivee);
+        $stmt->bindParam(':places', $places);
+        $stmt->bindParam(':agence_depart', $agence_depart);
+        $stmt->bindParam(':agence_arrivee', $agence_arrivee);
+        $stmt->bindParam(':id_trajet', $id_trajet);
+        $stmt->bindParam(':id_utilisateur', $id_utilisateur);
+        
+        return $stmt->execute();
+    }
 }
 ?>

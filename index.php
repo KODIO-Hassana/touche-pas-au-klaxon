@@ -65,17 +65,15 @@ $router->post('/trajet/supprimer', function() {
     $controller->supprimer();
 });
 
-// Route pour AFFICHER le formulaire d'inscription
-// $router->get('/inscription', function() {
-//     $controller = new AuthController();
-//     $controller->register();
-// });
+// Routes pour MODIFIER un trajet
+$router->get('/trajet/modifier', function() {
+    $controller = new TrajetController();
+    $controller->edit();
+});
 
-// Route pour TRAITER le formulaire d'inscription
-// $router->post('/inscription', function() {
-//     $controller = new AuthController();
-//     $controller->storeUser();
-// });
+$router->post('/trajet/modifier', function() {
+    $controller = new TrajetController();
+    $controller->update();
+});
 
-// 5. On demande au routeur de s'exécuter
 $router->run();
