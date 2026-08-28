@@ -7,6 +7,26 @@
     <!-- Le fameux lien Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btnToggle = document.getElementById('btnToggleMdp');
+    const champMdp = document.getElementById('mot_de_passe');
+
+    // On vérifie que les deux éléments existent bien sur la page pour éviter les erreurs
+    if(btnToggle && champMdp) {
+        btnToggle.addEventListener('click', function () {
+            if (champMdp.type === 'password') {
+                champMdp.type = 'text';
+                this.textContent = '🙈'; 
+            } else {
+                champMdp.type = 'password';
+                this.textContent = '👁️';
+            }
+        });
+    }
+});
+</script>
 <!-- "d-flex align-items-center" permet de centrer verticalement sur toute la hauteur de la page -->
 <body class="bg-light d-flex align-items-center" style="min-height: 100vh;">
 
@@ -36,9 +56,12 @@
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             
-                            <div class="mb-4">
-                                <label for="mot_de_passe" class="form-label">Mot de passe :</label>
-                                <input type="password" class="form-control" id="mot_de_passe" name="mot_de_passe" required>
+                            <div class="mb-3">
+                                <label for="mot_de_passe" class="form-label">Mot de passe</label>
+                                <div class="input-group">
+                                    <input type="password" name="mot_de_passe" id="mot_de_passe" class="form-control" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="btnToggleMdp" title="Afficher/Masquer le mot de passe">👁️</button>
+                                </div>
                             </div>
                             
                             <div class="d-grid">

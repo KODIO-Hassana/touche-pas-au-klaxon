@@ -1,64 +1,75 @@
 <?php
-require_once __DIR__ . '/../models/Trajet.php';
-require_once __DIR__ . '/../models/Agence.php';
 
 class TrajetController {
-    
-    public function create() {
+
+    // 1. Afficher le formulaire d'ajout
+    public function afficherFormulaireAjout() {
         if (!isset($_SESSION['utilisateur_id'])) {
             header("Location: /touche-pas-au-klaxon/connexion");
             exit();
         }
+
+        require_once __DIR__ . '/../models/Agence.php';
         $agenceModel = new Agence();
         $agences = $agenceModel->getAllAgences();
-        require_once __DIR__ . '/../views/ajouter_trajet.php';
+
+        require_once __DIR__ . '/../views/trajet_ajouter.php';
     }
 
-    public function store() {
+    // 2. Traiter le formulaire d'ajout avec contrôles stricts
+    public function traiterAjout() {
         if (!isset($_SESSION['utilisateur_id'])) {
             header("Location: /touche-pas-au-klaxon/connexion");
             exit();
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $agence_depart = $_POST['id_agence_depart'];
-            $agence_arrivee = $_POST['id_agence_arrivee'];
-            $depart = $_POST['date_heure_depart'];
-            $arrivee = $_POST['date_heure_arrivee'];
-            $places = $_POST['places_total'];
-            $id_utilisateur = $_SESSION['utilisateur_id']; 
+            $id_utilisateur = $_SESSION['utilisateur_id'];
+            
+            // Le trim() enlève les espaces invisibles qui faussent la comparaison
+            $id_agence_depart = trim($_POST['id_agence_depart']);
+            $id_agence_arrivee = trim($_POST['id_agence_arrivee']);
+            $date_heure_depart = $_POST['date_heure_depart'];
+            $date_heure_arrivee = $_POST['date_heure_arrivee'];
+            $places_total = (int) $_POST['places_total'];
 
+            $erreur = null;
+
+            // Contrôles de cohérence
+            if ($id_agence_depart === $id_agence_arrivee) {
+                $erreur = "🚨 L'agence de départ et l'agence d'arrivée doivent être différentes.";
+            } elseif (strtotime($date_heure_arrivee) <= strtotime($date_heure_depart)) {
+                $erreur = "🚨 La date et l'heure d'arrivée doivent être postérieures au départ.";
+            }
+
+            // Si erreur, on bloque et on réaffiche
+            if ($erreur !== null) {
+                require_once __DIR__ . '/../models/Agence.php';
+                $agenceModel = new Agence();
+                $agences = $agenceModel->getAllAgences();
+                require_once __DIR__ . '/../views/trajet_ajouter.php';
+                return; 
+            }
+
+            // Sinon, on sauvegarde en base
+            require_once __DIR__ . '/../models/Trajet.php';
             $trajetModel = new Trajet();
-            $succes = $trajetModel->ajouterTrajet($depart, $arrivee, $places, $id_utilisateur, $agence_depart, $agence_arrivee);
-
-            if ($succes) {
+            
+            if ($trajetModel->creerTrajet($id_utilisateur, $id_agence_depart, $id_agence_arrivee, $date_heure_depart, $date_heure_arrivee, $places_total)) {
                 $_SESSION['flash_message'] = "Votre trajet a été publié avec succès !";
                 header("Location: /touche-pas-au-klaxon/");
                 exit();
             } else {
-                echo "Une erreur est survenue lors de l'enregistrement.";
+                $erreur = "🚨 Une erreur est survenue lors de l'enregistrement.";
+                require_once __DIR__ . '/../models/Agence.php';
+                $agenceModel = new Agence();
+                $agences = $agenceModel->getAllAgences();
+                require_once __DIR__ . '/../views/trajet_ajouter.php';
             }
         }
     }
 
-    public function reserver() {
-        if (!isset($_SESSION['utilisateur_id'])) {
-            header("Location: /touche-pas-au-klaxon/connexion");
-            exit();
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_trajet'])) {
-            $trajetModel = new Trajet();
-            $trajetModel->reserverPlace($_POST['id_trajet']);
-            
-            $_SESSION['flash_message'] = "Votre place a bien été réservée !";
-        }
-
-        header("Location: /touche-pas-au-klaxon/");
-        exit();
-    }
-
-    // NOUVELLE FONCTION SUPPRIMER (bien à l'intérieur de la classe)
+    // 3. Supprimer un trajet
     public function supprimer() {
         if (!isset($_SESSION['utilisateur_id'])) {
             header("Location: /touche-pas-au-klaxon/connexion");
@@ -66,75 +77,13 @@ class TrajetController {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_trajet'])) {
+            require_once __DIR__ . '/../models/Trajet.php';
             $trajetModel = new Trajet();
-            $id_trajet = $_POST['id_trajet'];
-            $id_utilisateur = $_SESSION['utilisateur_id']; // Sécurité supplémentaire
-
-            if ($trajetModel->supprimerTrajet($id_trajet, $id_utilisateur)) {
-                // Message flash de succès
-                $_SESSION['flash_message'] = "Votre trajet a été définitivement supprimé.";
-            } else {
-                $_SESSION['flash_message'] = "Erreur lors de la suppression du trajet.";
-            }
-        }
-
-        // Retour à l'accueil
-        header("Location: /touche-pas-au-klaxon/");
-        exit();
-    }
-
-    // Afficher le formulaire de modification pré-rempli
-    public function edit() {
-        if (!isset($_SESSION['utilisateur_id'])) {
-            header("Location: /touche-pas-au-klaxon/connexion");
-            exit();
-        }
-
-        if (isset($_GET['id'])) {
-            $trajetModel = new Trajet();
-            $trajet = $trajetModel->getTrajetById($_GET['id']);
             
-            // Sécurité : on vérifie que le trajet existe ET qu'il appartient bien à l'utilisateur !
-            if ($trajet && $trajet['id_utilisateur'] == $_SESSION['utilisateur_id']) {
-                $agenceModel = new Agence();
-                $agences = $agenceModel->getAllAgences();
-                require_once __DIR__ . '/../views/modifier_trajet.php';
-            } else {
-                $_SESSION['flash_message'] = "Vous n'avez pas l'autorisation de modifier ce trajet.";
-                header("Location: /touche-pas-au-klaxon/");
-                exit();
-            }
-        } else {
-            header("Location: /touche-pas-au-klaxon/");
-            exit();
-        }
-    }
-
-    // Traiter la sauvegarde de la modification
-    public function update() {
-        if (!isset($_SESSION['utilisateur_id'])) {
-            header("Location: /touche-pas-au-klaxon/connexion");
-            exit();
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id_trajet = $_POST['id_trajet'];
-            $agence_depart = $_POST['id_agence_depart'];
-            $agence_arrivee = $_POST['id_agence_arrivee'];
-            $depart = $_POST['date_heure_depart'];
-            $arrivee = $_POST['date_heure_arrivee'];
-            $places = $_POST['places_total'];
-            $id_utilisateur = $_SESSION['utilisateur_id']; 
-
-            $trajetModel = new Trajet();
-            $succes = $trajetModel->modifierTrajet($id_trajet, $depart, $arrivee, $places, $id_utilisateur, $agence_depart, $agence_arrivee);
-
-            if ($succes) {
-                $_SESSION['flash_message'] = "Votre trajet a été modifié avec succès !";
-            } else {
-                $_SESSION['flash_message'] = "Erreur lors de la modification du trajet.";
-            }
+            // CORRECTION ICI : On envoie l'ID du trajet ET l'ID de l'utilisateur
+            $trajetModel->supprimerTrajet($_POST['id_trajet'], $_SESSION['utilisateur_id']);
             
+            $_SESSION['flash_message'] = "Votre trajet a été définitivement supprimé.";
             header("Location: /touche-pas-au-klaxon/");
             exit();
         }

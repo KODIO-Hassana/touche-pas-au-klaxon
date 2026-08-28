@@ -4,16 +4,15 @@ require_once __DIR__ . '/../models/Trajet.php'; // On importe le nouveau modèle
 
 class HomeController {
     public function index() {
-        // Récupération des agences
-        $agenceModel = new Agence();
-        $agences = $agenceModel->getAllAgences();
-
-        // Récupération des trajets
+        // On inclut le modèle Trajet
+        require_once __DIR__ . '/../models/Trajet.php';
         $trajetModel = new Trajet();
-        $trajets = $trajetModel->getAllTrajets();
-
-        // On charge l'affichage
-        require_once __DIR__ . '/../views/accueil.php';
+        
+        // On récupère les trajets filtrés
+        $trajets = $trajetModel->getTrajetsDisponibles();
+        
+        // On charge la vue de l'accueil
+        require_once __DIR__ . '/../views/accueil.php'; 
     }
 }
 ?>

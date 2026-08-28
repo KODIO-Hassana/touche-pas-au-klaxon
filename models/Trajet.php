@@ -141,5 +141,53 @@ class Trajet {
         return $stmt->execute();
     }
 
+    // Fonction pour l'accueil : Trajets futurs avec places disponibles, triés par date croissante
+    public function getTrajetsDisponibles() {
+        try {
+            $requete = "SELECT t.*, 
+                               u.nom AS chauffeur_nom, u.prenom AS chauffeur_prenom, u.telephone, u.email,
+                               ad.nom AS ville_depart, 
+                               aa.nom AS ville_arrivee
+                        FROM trajet t
+                        JOIN utilisateur u ON t.id_utilisateur = u.id_utilisateur
+                        JOIN agence ad ON t.id_agence_depart = ad.id_agence
+                        JOIN agence aa ON t.id_agence_arrivee = aa.id_agence
+                        WHERE t.places_disponibles > 0 
+                        AND t.date_heure_depart >= NOW() 
+                        ORDER BY t.date_heure_depart ASC"; 
+                        
+            $stmt = $this->conn->prepare($requete);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (PDOException $e) {
+            die("🚨 Erreur SQL détectée : " . $e->getMessage());
+        }
+    }
+
+    // Créer un nouveau trajet
+    public function creerTrajet($id_utilisateur, $id_agence_depart, $id_agence_arrivee, $date_heure_depart, $date_heure_arrivee, $places_total) {
+        try {
+            // À la création, le nombre de places disponibles est égal au nombre de places total
+            $requete = "INSERT INTO trajet (id_utilisateur, id_agence_depart, id_agence_arrivee, date_heure_depart, date_heure_arrivee, places_total, places_disponibles) 
+                        VALUES (:id_utilisateur, :id_agence_depart, :id_agence_arrivee, :date_heure_depart, :date_heure_arrivee, :places_total, :places_disponibles)";
+            
+            $stmt = $this->conn->prepare($requete);
+            
+            $stmt->bindParam(':id_utilisateur', $id_utilisateur);
+            $stmt->bindParam(':id_agence_depart', $id_agence_depart);
+            $stmt->bindParam(':id_agence_arrivee', $id_agence_arrivee);
+            $stmt->bindParam(':date_heure_depart', $date_heure_depart);
+            $stmt->bindParam(':date_heure_arrivee', $date_heure_arrivee);
+            $stmt->bindParam(':places_total', $places_total);
+            $stmt->bindParam(':places_disponibles', $places_total); 
+            
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            die("🚨 Erreur SQL lors de la création : " . $e->getMessage());
+        }
+    }
+
 }
 ?>

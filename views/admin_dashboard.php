@@ -87,7 +87,8 @@
                     <div class="card-body">
                         <h5 class="card-title">Trajets</h5>
                         <p class="card-text">Superviser les covoiturages.</p>
-                        <button class="btn btn-primary" disabled>Bientôt disponible</button>
+                        <!-- <button class="btn btn-primary" disabled>Bientôt disponible</button> -->
+                         <a href="/touche-pas-au-klaxon/admin/trajets" class="btn btn-primary">Gérer les trajets</a>
                     </div>
                 </div>
             </div>

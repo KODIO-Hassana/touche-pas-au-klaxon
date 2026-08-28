@@ -43,16 +43,18 @@ $router->get('/deconnexion', function() {
     $controller->logout();
 });
 
-// Route pour AFFICHER le formulaire d'ajout de trajet
+// Afficher le formulaire pour proposer un trajet (GET)
 $router->get('/trajet/ajouter', function() {
+    require_once __DIR__ . '/controllers/TrajetController.php';
     $controller = new TrajetController();
-    $controller->create();
+    $controller->afficherFormulaireAjout(); // Le bon nom de la fonction !
 });
 
-// Route pour ENREGISTRER le trajet dans la base de données
+// Traiter l'envoi du formulaire (POST)
 $router->post('/trajet/ajouter', function() {
+    require_once __DIR__ . '/controllers/TrajetController.php';
     $controller = new TrajetController();
-    $controller->store();
+    $controller->traiterAjout(); // Le bon nom de la fonction de traitement !
 });
 
 // Route pour RESERVER une place

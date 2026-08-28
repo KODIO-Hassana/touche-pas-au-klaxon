@@ -8,6 +8,7 @@
 </head>
 <body class="bg-light">
 
+    <!-- HEADER -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container">
             <a class="navbar-brand" href="/touche-pas-au-klaxon/">🚗 Touche pas au Klaxon</a>
@@ -33,105 +34,94 @@
         <?php endif; ?>
     </div>
 
-    <div class="container">
+    <!-- CONTENU PRINCIPAL -->
+    <div class="container mt-4">
+        
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3">Tableau de bord des trajets</h1>
-            <a href="/touche-pas-au-klaxon/trajet/ajouter" class="btn btn-success">+ Proposer un trajet</a>
+            <h2>🚗 Prochains covoiturages disponibles</h2>
+            
+            <!-- Le bouton pour ajouter n'apparaît que si l'employé est connecté -->
+            <?php if(isset($_SESSION['utilisateur_prenom'])): ?>
+                <a href="/touche-pas-au-klaxon/trajet/ajouter" class="btn btn-success">+ Proposer un trajet</a>
+            <?php endif; ?>
         </div>
-
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h2 class="h5 mb-0">Trajets disponibles</h2>
-                    </div>
-                    <div class="card-body">
+    
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Départ</th>
+                            <th>Date et Heure</th>
+                            <th>Arrivée</th>
+                            <th>Places dispo.</th>
+                            <?php if(isset($_SESSION['utilisateur_prenom'])): ?>
+                                <th>Action</th>
+                            <?php endif; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
                         <?php if (empty($trajets)): ?>
-                            <p class="text-muted">Aucun trajet proposé pour le moment.</p>
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">Aucun trajet n'est prévu pour le moment. Revenez plus tard !</td>
+                            </tr>
                         <?php else: ?>
-                            <ul class="list-group list-group-flush">
-                                <?php foreach($trajets as $trajet): ?>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <?php foreach($trajets as $trajet): ?>
+                                <tr>
+                                    <td class="fw-bold text-primary"><?= htmlspecialchars($trajet['ville_depart']) ?></td>
+                                    <td><?= date('d/m/Y à H:i', strtotime($trajet['date_heure_depart'])) ?></td>
+                                    <td class="fw-bold text-success"><?= htmlspecialchars($trajet['ville_arrivee']) ?></td>
+                                    <td>
+                                        <span class="badge bg-info text-dark rounded-pill fs-6">
+                                            <?= htmlspecialchars($trajet['places_disponibles']) ?>
+                                        </span>
+                                    </td>
+                                    
+                                    <!-- Les actions ne s'affichent que si l'utilisateur est connecté -->
+                                    <?php if(isset($_SESSION['utilisateur_prenom'])): ?>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalTrajet<?= $trajet['id_trajet'] ?>">Détails</button>
+                                    </td>
+                                    <?php endif; ?>
+                                </tr>
+
+                                <!-- FENÊTRE MODALE POUR CE TRAJET (Générée uniquement si connecté) -->
+                                <?php if(isset($_SESSION['utilisateur_prenom'])): ?>
+                                <div class="modal fade" id="modalTrajet<?= $trajet['id_trajet'] ?>" tabindex="-1" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header bg-info text-white">
+                                        <h5 class="modal-title">Détails du trajet</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <p><strong>Conducteur :</strong> <?= htmlspecialchars($trajet['chauffeur_prenom'] . ' ' . $trajet['chauffeur_nom']) ?></p>
+                                        <p><strong>Téléphone :</strong> <?= htmlspecialchars($trajet['telephone'] ?? 'Non renseigné') ?></p>
+                                        <p><strong>Email :</strong> <?= htmlspecialchars($trajet['email']) ?></p>
+                                        <p><strong>Places au total :</strong> <?= htmlspecialchars($trajet['places_total']) ?></p>
+                                      </div>
+                                      <div class="modal-footer d-flex justify-content-between">
                                         <div>
-                                            <h6 class="mb-0">De <?= htmlspecialchars($trajet['ville_depart']) ?> à <?= htmlspecialchars($trajet['ville_arrivee']) ?></h6>
-                                            <small class="text-muted">Départ le : <?= htmlspecialchars(date('d/m/Y à H:i', strtotime($trajet['date_heure_depart']))) ?></small>
-                                        </div>
-                                        
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-primary rounded-pill me-3">
-                                                <?= htmlspecialchars($trajet['places_disponibles']) ?> / <?= htmlspecialchars($trajet['places_total']) ?> places
-                                            </span>
-                                            
-                                            <!-- Bouton Infos -->
-                                            <button type="button" class="btn btn-sm btn-info text-white me-2" data-bs-toggle="modal" data-bs-target="#modalTrajet<?= $trajet['id_trajet'] ?>">
-                                                Infos
-                                            </button>
-                                            
-                                            <?php if(isset($_SESSION['utilisateur_id'])): ?>
-                                                <?php if($_SESSION['utilisateur_id'] != $trajet['id_utilisateur']): ?>
-                                                    <?php if($trajet['places_disponibles'] > 0): ?>
-                                                        <form action="/touche-pas-au-klaxon/trajet/reserver" method="POST" style="margin: 0;">
-                                                            <input type="hidden" name="id_trajet" value="<?= $trajet['id_trajet'] ?>">
-                                                            <button type="submit" class="btn btn-sm btn-outline-primary">Réserver</button>
-                                                        </form>
-                                                    <?php else: ?>
-                                                        <span class="badge bg-danger">Complet</span>
-                                                    <?php endif; ?>
-                                                <?php else: ?>
-                                                    <!-- Bouton Modifier -->
-                                                    <a href="/touche-pas-au-klaxon/trajet/modifier?id=<?= $trajet['id_trajet'] ?>" class="btn btn-sm btn-warning text-dark me-2">Modifier</a>
-                                                    
-                                                    <!-- Bouton Supprimer (avec alerte de confirmation JS) -->
-                                                    <form action="/touche-pas-au-klaxon/trajet/supprimer" method="POST" style="margin: 0;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce trajet ?');">
-                                                        <input type="hidden" name="id_trajet" value="<?= $trajet['id_trajet'] ?>">
-                                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                                                    </form>
-                                                <?php endif; ?>
+                                            <!-- Si l'utilisateur connecté est l'auteur du trajet, on affiche les boutons de gestion -->
+                                            <?php if($_SESSION['utilisateur_id'] == $trajet['id_utilisateur']): ?>
+                                                <a href="/touche-pas-au-klaxon/trajet/modifier?id=<?= $trajet['id_trajet'] ?>" class="btn btn-sm btn-warning text-dark">Modifier</a>
+                                                <form action="/touche-pas-au-klaxon/trajet/supprimer" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce trajet ?');">
+                                                    <input type="hidden" name="id_trajet" value="<?= $trajet['id_trajet'] ?>">
+                                                    <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                                </form>
                                             <?php endif; ?>
                                         </div>
-                                    </li>
-
-                                    <!-- Fenêtre Modale Bootstrap pour ce trajet -->
-                                    <div class="modal fade" id="modalTrajet<?= $trajet['id_trajet'] ?>" tabindex="-1" aria-hidden="true">
-                                      <div class="modal-dialog">
-                                        <div class="modal-content">
-                                          <div class="modal-header bg-info text-white">
-                                            <h5 class="modal-title">Détails du trajet</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                          </div>
-                                          <div class="modal-body">
-                                            <p><strong>Conducteur :</strong> <?= htmlspecialchars($trajet['chauffeur_prenom'] . ' ' . $trajet['chauffeur_nom']) ?></p>
-                                            <p><strong>Téléphone :</strong> <?= htmlspecialchars($trajet['chauffeur_telephone'] ?? 'Non renseigné') ?></p>
-                                            <p><strong>Email :</strong> <?= htmlspecialchars($trajet['chauffeur_email']) ?></p>
-                                            <p><strong>Places au total :</strong> <?= htmlspecialchars($trajet['places_total']) ?></p>
-                                          </div>
-                                          <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                                          </div>
-                                        </div>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                                       </div>
                                     </div>
-                                    
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?> <!-- C'EST LUI QUI AVAIT DISPARU ! -->
-                    </div>
-                </div>
-            </div>
+                                  </div>
+                                </div>
+                                <?php endif; ?>
 
-            <div class="col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h2 class="h5 mb-0">Nos agences</h2>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <?php foreach($agences as $agence): ?>
-                                <li class="list-group-item"><?= htmlspecialchars($agence['nom']) ?></li>
                             <?php endforeach; ?>
-                        </ul>
-                    </div>
-                </div>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
