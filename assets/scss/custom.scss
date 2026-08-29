@@ -1,0 +1,19 @@
+// 1. Couleurs imposées par le cahier des charges
+$color-light: #f1f8fc; // Fond très clair
+$color-blue:  #0074c7; // Bleu vif
+$color-dark:  #00497c; // Bleu foncé
+$color-gray:  #384050; // Gris foncé / Anthracite
+$color-red:   #cd2c2e; // Rouge
+$color-green: #82b864; // Vert
+
+// 2. Remplacement des variables Bootstrap
+$primary:   $color-blue;
+$secondary: $color-gray;
+$success:   $color-green;
+$danger:    $color-red;
+$info:      $color-light;
+$dark:      $color-dark;
+
+// 3. Import du framework Bootstrap
+// (C'est ce qui permet de fusionner tes couleurs avec le reste de Bootstrap)
+@import "../../node_modules/bootstrap/scss/bootstrap";
