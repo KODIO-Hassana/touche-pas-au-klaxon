@@ -43,6 +43,20 @@ $router->get('/deconnexion', function() {
     $controller->logout();
 });
 
+// Afficher le formulaire de modification (GET)
+$router->get('/trajet/modifier', function() {
+    require_once __DIR__ . '/controllers/TrajetController.php';
+    $controller = new TrajetController();
+    $controller->afficherFormulaireModification();
+});
+
+// Traiter l'envoi du formulaire de modification (POST)
+$router->post('/trajet/modifier', function() {
+    require_once __DIR__ . '/controllers/TrajetController.php';
+    $controller = new TrajetController();
+    $controller->traiterModification();
+});
+
 // Afficher le formulaire pour proposer un trajet (GET)
 $router->get('/trajet/ajouter', function() {
     require_once __DIR__ . '/controllers/TrajetController.php';
@@ -69,15 +83,18 @@ $router->post('/trajet/supprimer', function() {
     $controller->supprimer();
 });
 
-// Routes pour MODIFIER un trajet
+// Afficher le formulaire de modification (GET)
 $router->get('/trajet/modifier', function() {
+    require_once __DIR__ . '/controllers/TrajetController.php';
     $controller = new TrajetController();
-    $controller->edit();
+    $controller->afficherFormulaireModification(); // 👈 Le bon nom !
 });
 
+// Traiter l'envoi du formulaire de modification (POST)
 $router->post('/trajet/modifier', function() {
+    require_once __DIR__ . '/controllers/TrajetController.php';
     $controller = new TrajetController();
-    $controller->update();
+    $controller->traiterModification(); // 👈 Le bon nom !
 });
 
 

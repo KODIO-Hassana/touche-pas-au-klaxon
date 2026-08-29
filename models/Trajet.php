@@ -118,25 +118,28 @@ class Trajet {
     }
 
     // Fonction pour mettre à jour (écraser) les données du trajet
-    public function modifierTrajet($id_trajet, $depart, $arrivee, $places, $id_utilisateur, $agence_depart, $agence_arrivee) {
+    public function modifierTrajet($id_trajet, $id_utilisateur, $id_agence_depart, $id_agence_arrivee, $date_heure_depart, $date_heure_arrivee, $places_total) {
         // La requête UPDATE modifie une ligne existante. On vérifie l'id_utilisateur par sécurité !
+        // AJOUT CRUCIAL : On met aussi à jour places_disponibles
         $requete = "UPDATE trajet 
-                    SET date_heure_depart = :depart, 
+                    SET id_agence_depart = :agence_depart, 
+                        id_agence_arrivee = :agence_arrivee, 
+                        date_heure_depart = :depart, 
                         date_heure_arrivee = :arrivee, 
                         places_total = :places, 
-                        id_agence_depart = :agence_depart, 
-                        id_agence_arrivee = :agence_arrivee 
+                        places_disponibles = :places 
                     WHERE id_trajet = :id_trajet AND id_utilisateur = :id_utilisateur";
         
         $stmt = $this->conn->prepare($requete);
         
-        $stmt->bindParam(':depart', $depart);
-        $stmt->bindParam(':arrivee', $arrivee);
-        $stmt->bindParam(':places', $places);
-        $stmt->bindParam(':agence_depart', $agence_depart);
-        $stmt->bindParam(':agence_arrivee', $agence_arrivee);
+        // On relie les paramètres avec la même logique que creerTrajet
         $stmt->bindParam(':id_trajet', $id_trajet);
         $stmt->bindParam(':id_utilisateur', $id_utilisateur);
+        $stmt->bindParam(':agence_depart', $id_agence_depart);
+        $stmt->bindParam(':agence_arrivee', $id_agence_arrivee);
+        $stmt->bindParam(':depart', $date_heure_depart);
+        $stmt->bindParam(':arrivee', $date_heure_arrivee);
+        $stmt->bindParam(':places', $places_total);
         
         return $stmt->execute();
     }
@@ -188,6 +191,8 @@ class Trajet {
             die("🚨 Erreur SQL lors de la création : " . $e->getMessage());
         }
     }
+
+ 
 
 }
 ?>
