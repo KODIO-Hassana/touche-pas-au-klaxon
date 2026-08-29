@@ -157,7 +157,7 @@ class AdminController {
             $trajetModel = new Trajet();
             
             // On utilise la fonction de suppression que tu avais déjà créée pour l'employé
-            if ($trajetModel->supprimerTrajet($_POST['id_trajet'])) {
+            if ($trajetModel->supprimerTrajetAdmin($_POST['id_trajet'])) {
                 $_SESSION['flash_message'] = "Le trajet a été supprimé par l'administrateur.";
             } else {
                 $_SESSION['flash_message'] = "Erreur lors de la suppression du trajet.";

@@ -121,6 +121,20 @@ $router->post('/admin/agences/ajouter', function() {
     $controller->storeAgence();
 });
 
+// Afficher le formulaire de modification d'une agence (GET)
+$router->get('/admin/agences/modifier', function() {
+    require_once __DIR__ . '/controllers/AdminController.php';
+    $controller = new AdminController();
+    $controller->editAgence();
+});
+
+// Traiter la modification d'une agence en base de données (POST)
+$router->post('/admin/agences/modifier', function() {
+    require_once __DIR__ . '/controllers/AdminController.php';
+    $controller = new AdminController();
+    $controller->updateAgence();
+});
+
 // Routes pour MODIFIER une agence
 $router->get('/admin/agences/modifier', function() {
     $controller = new AdminController();

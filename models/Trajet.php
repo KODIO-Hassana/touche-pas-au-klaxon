@@ -192,7 +192,15 @@ class Trajet {
         }
     }
 
- 
+ // Fonction exclusive Admin : Supprimer un trajet sans vérifier l'auteur
+    public function supprimerTrajetAdmin($id_trajet) {
+        $requete = "DELETE FROM trajet WHERE id_trajet = :id_trajet";
+        $stmt = $this->conn->prepare($requete);
+        
+        $stmt->bindParam(':id_trajet', $id_trajet);
+        
+        return $stmt->execute();
+    }
 
 }
 ?>
