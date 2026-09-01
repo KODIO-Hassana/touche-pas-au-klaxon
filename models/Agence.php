@@ -10,7 +10,14 @@ class Agence {
         $this->conn = $db->getConnection();
     }
 
-    // Fonction pour récupérer toutes les agences (avec tri et recherche)
+    /**
+     * Récupère toutes les agences de la base de données.
+     *
+     * @param string $tri Le nom de la colonne pour ordonner les résultats (par défaut 'nom').
+     * @param string $recherche Le terme recherché pour filtrer les agences (par défaut vide).
+     * @return array La liste des agences sous forme de tableau associatif.
+     */
+
     public function getAllAgences($tri = 'nom', $recherche = '') {
         // Liste blanche pour sécuriser le tri
         $colonnes_autorisees = ['id_agence', 'nom'];

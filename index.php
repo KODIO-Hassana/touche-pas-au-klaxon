@@ -168,4 +168,25 @@ $router->post('/admin/trajets/supprimer', function() {
     $controller->deleteTrajet();
 });
 
+// Lister les utilisateurs (GET)
+$router->get('/admin/utilisateurs', function() {
+    require_once __DIR__ . '/controllers/AdminController.php';
+    $controller = new AdminController();
+    $controller->manageUsers();
+});
+
+// Lister tous les trajets (GET)
+$router->get('/admin/trajets', function() {
+    require_once __DIR__ . '/controllers/AdminController.php';
+    $controller = new AdminController();
+    $controller->manageTrajets();
+});
+
+// Supprimer n'importe quel trajet (POST)
+$router->post('/admin/trajets/supprimer', function() {
+    require_once __DIR__ . '/controllers/AdminController.php';
+    $controller = new AdminController();
+    $controller->deleteTrajet();
+});
+
 $router->run();
